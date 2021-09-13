@@ -1,0 +1,215 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#">Vending Machine</a>
+
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item">
+        <h3 *ngIf="newcustomer">Balance: $ <span id="balanceId">{{newcustomer?.money}}</span></h3>
+      </li>
+      <li class="nav-item">
+        <button *ngIf="newcustomer" (click)="updateBalModal()" type="button" class="btn nav-link" data-toggle="modal" data-target="#updateModal">Add Money</button>
+      </li>
+      <li class="nav-item">
+        <button *ngIf="newcustomer" (click)="getCustomerOrders(newcustomer.id)" type="button" class="btn nav-link" data-toggle="modal" data-target="#orderHistoryModal">Order History</button>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <a href="#" id="adminLogin" class="badge badge-info mr-1" data-toggle="modal" data-target="#adminModal">Are you Admin?</a>
+      <button type="button" id="loginNow" class="btn btn-outline-primary my-2 mr-1 my-sm-0" data-toggle="modal" data-target="#loginModal">Login</button>
+      <button type="button" id="registerNow" class="btn btn-outline-secondary my-2 mr-1 my-sm-0" data-toggle="modal" data-target="#registerModal">Register</button>
+      <button *ngIf="newcustomer" type="button" class="btn btn-link">Hellow {{'Customer '+newcustomer?.id}}!</button>
+      <button *ngIf="admin" type="button" class="btn btn-link">Hellow Admin!</button>
+      <button *ngIf="newcustomer" (click)="reloadPage()" type="button" class="btn btn-outline-dark my-2 mr-1 my-sm-0">Logout</button>
+      <button *ngIf="admin" (click)="reloadPage()" type="button" class="btn btn-outline-dark my-2 mr-1 my-sm-0">Logout</button>
+    </form>
+  </div>
+</nav>
+
+  <div  class="row" *ngIf="admin">
+    <div class="col-sm" >
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-customerview-tab" data-toggle="tab" href="#nav-customerview" role="tab" aria-controls="nav-customerview" aria-selected="true">Customer View</a>
+          <a class="nav-item nav-link" id="nav-customerinfo-tab" data-toggle="tab" href="#nav-customerinfo" role="tab" aria-controls="nav-customerinfo" aria-selected="false">Customer End</a>
+          <a class="nav-item nav-link" id="nav-products-tab" data-toggle="tab" href="#nav-products" role="tab" aria-controls="nav-products" aria-selected="false">Product End</a>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-customerview" role="tabpanel" aria-labelledby="nav-customerview-tab">
+          <item-list [newcustomer]="newcustomer" ></item-list>
+        </div>
+        <div class="tab-pane fade show" id="nav-customerinfo" role="tabpanel" aria-labelledby="nav-customerfino-tab">
+          <customer-template ></customer-template>
+        </div>
+        <div class="tab-pane fade" id="nav-products" role="tabpanel" aria-labelledby="nav-products-tab">
+          <admin-template [show]="show"></admin-template>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-sm">
+    </div>
+    <div class="col-sm">
+    </div> -->
+  </div>
+  <!-- <admin-template></admin-template> -->
+    <item-list [hidden]="!show" [newcustomer]="newcustomer"></item-list>
+
+  <!-- Modal Login Admin -->
+<div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adminModalLabel">Admin Login</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #adminForm="ngForm" (ngSubmit)="onGetAdmin(adminForm)">
+          <h3><div id="errorLoginAdmin" style="color: red;"></div></h3>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Username</label>
+            <input ngModel type="text" name="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter username">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input ngModel type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="login-admin-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button [disabled]="adminForm.invalid" type="submit" class="btn btn-primary" >Login now</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- Modal Login Customer -->
+  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Login Customer Code</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #loginForm="ngForm" (ngSubmit)="onGetCustomer(loginForm)">
+            <h3><div id="errorLogin" style="color: red;"></div></h3>
+            <label>Enter your code:</label>
+            <input type="text" ngModel name="generateCode" class="form-control" id="generateCode" placeholder="Enter your code..">
+            <div class="modal-footer">
+              <button type="button" id="login-customer-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="loginForm.invalid" type="submit" class="btn btn-primary" >Login now</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Add Money -->
+  <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add to your Balance</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addMoneyForm="ngForm" (ngSubmit)="onUpdateCustomer(addMoneyForm)">
+            <h3>Current Balance: $ <span id="currentBalId"></span></h3>
+            <label for="basic-url">Enter your money:</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" min="0" ngModel name="money" class="form-control" id="addMoney" placeholder="0.0" aria-label="Amount (to the nearest dollar)">
+                <div class="input-group-append">
+                  <span class="input-group-text">ex. 2.51</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="login-customer-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="addMoneyForm.invalid" type="submit" class="btn btn-primary" >Add now</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Register -->
+  <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="registerModalModalLabel">Customer Registration</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <h3><div id="errorReg" style="color: red;"></div></h3>
+            <form id="regForm" #addForm="ngForm" (ngSubmit)="onAddCustomer(addForm)">
+              <div class="form-group">
+                <label for="basic-url">Enter your money:</label>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">$</span>
+                  </div>
+                  <input type="number" min="0" ngModel name="money" class="form-control" id="money" placeholder="0.0" aria-label="Amount (to the nearest dollar)">
+                  <div class="input-group-append">
+                    <span class="input-group-text">ex. 2.51</span>
+                  </div>
+                </div>
+                <span>Note: Wait for your code to be generated and use it as your acount</span>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="add-customer-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Register now</button>
+              </div>
+            </form>
+            <h4><span *ngIf="newcustomer" style="color: seagreen;">Success!!</span></h4>
+            <h4><span *ngIf="newcustomer">Please Save this code for your Account Login!</span></h4>
+            <h1 class="display-4" *ngIf="newcustomer">{{newcustomer?.generateCode}}</h1>
+         </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Order History -->
+  <div class="modal fade" id="orderHistoryModal" tabindex="-1" role="dialog" aria-labelledby="registerModalModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="orderHistoryModalLabel">Customer Order History</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table">
+              <thead>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Date Purchased</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of customerOrderHistory">
+                  <td>{{order.name}}</td>
+                  <td>{{order.price}}</td>
+                  <td>{{order.dateAdded | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="add-customer-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+      </div>
+    </div>
+  </div>

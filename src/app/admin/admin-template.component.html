@@ -1,0 +1,167 @@
+<div class="container-fluid">
+  <div class="my-2 my-lg-0">
+    <a data-toggle="collapse" (click)="onClickAddProductList()" href="#collapseListOfProduct" role="button" aria-expanded="false" aria-controls="collapseListOfProduct" class="badge badge-info mr-1">Add Item?</a>
+    <div class="collapse" id="collapseListOfProduct">
+      <div class="card card-body">
+        <span id="messageOnAdd" style="color: red;"></span>
+        <form id="addProductFormId" #addProdForm="ngForm" (ngSubmit)="addProductForm(addProdForm)">
+          <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="allLetters">Letter</label>
+                <select id="allLetters" ngModel name="letter" class="form-control">
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label>Name of Item</label>
+              <input type="text" ngModel name="name" class="form-control" placeholder="Name of your item">
+            </div>
+            <div class="form-group col-md-2">
+              <label>Amount</label>
+              <input type="number" ngModel name="amount" min="0" class="form-control" placeholder="Amount">
+            </div>
+            <div class="form-group col-md-2">
+              <label>Price</label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" ngModel name="price" min="0" class="form-control" placeholder="Price">
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-1">
+            <button [disabled]="addProdForm.invalid" type="submit" class="btn btn-outline-primary btn-sm">Add it now</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="cls-pad col-md-6">
+    <table class="table table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Action</th>
+          <th scope="col">Letter</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let product of productsAdmin;let i = index">
+          <tr data-toggle="collapse" [attr.data-target]="'#deemmo'+i" class="accordion-toggle">
+            <td>
+              <a href="#" id="collapseData" class="btn btn-outline-primary btn-sm mr-1" >See more</a>
+              <!-- <a href="#" id="deleteProdData" (click)="deleteProdModal(product)" class="btn btn-outline-danger btn-sm mr-1" data-toggle="modal" data-target="#deleteProdModal">Delete all</a> -->
+            </td>
+            <td scope="row" >{{product.categoryName}}</td>
+          </tr>
+          <tr>
+            <td colspan="12" class="hiddenRow">
+              <div class="accordian-body collapse col-md-10" id="{{ 'deemmo'+ i}}">
+                <table class="table table-striped">
+                      <thead>
+                        <tr class="info">
+                          <th>Action</th>
+                          <th>Name</th>
+                          <th>Amount</th>
+                          <th>Price</th>
+                        </tr>
+                      </thead>
+                      <tbody *ngFor="let item of product?.items;let j = index">
+                        <td>
+                          <a href="#" id="updateItem" (click)="updateModal(product, item)" class="btn btn-outline-primary btn-sm mr-1" data-toggle="modal" data-target="#updateModal">Update</a>
+                          <a href="#" id="deleteItem" (click)="deleteModal(product, item)" class="btn btn-outline-danger btn-sm mr-1" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                        </td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.amount}}</td>
+                        <td>{{item.price}}</td>
+                      </tbody>
+                    </table>
+                  </div>
+              </td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Delete Product Modal -->
+<div class="modal fade" id="deleteProdModal" tabindex="-1" role="dialog" aria-labelledby="deleteProdModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteProdModalLabel">Are you sure?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>Note: All items will also be deleted.</h4>
+        <div id="dataProdToDelete"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="delete-prod-form" class="btn-outline-secondary btn-sm mr-1" data-dismiss="modal">Close</button>
+        <button  type="button" (click)="deleteProdNow()" class="btn-outline-primary btn-sm mr-1" >Delete now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Item Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="dataToDelete"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="delete-item-form" class="btn-outline-secondary btn-sm mr-1" data-dismiss="modal">Close</button>
+        <button  type="button" (click)="deleteItemNow()" class="btn-outline-primary btn-sm mr-1" >Delete now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateModalLabel">Update Data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span id="messageOnAdd" style="color: red;"></span>
+        <form id="ProductFormId" #updateItemForm="ngForm" (ngSubmit)="udpateItemNow(updateItemForm)">
+          <div class="form-group col-md-8">
+            <h3><span id="letterIdup"></span></h3>
+              <label>Name of Item: <strong id="nmIdupd"></strong></label>
+              <input type="text" ngModel  name="nametoup" class="form-control" placeholder="New Name of your item">
+            </div>
+            <div class="form-group col-md-8">
+              <label>Amount: <strong id="amtIdupd"></strong></label>
+              <input type="number" ngModel  name="amounttoup" min="0" class="form-control" placeholder="New Amount">
+            </div>
+            <div class="form-group col-md-8">
+              <label>Price: <strong id="prcIdupd"></strong></label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" ngModel name="pricetoup" min="0" class="form-control" placeholder="New Price">
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" id="update-item-form" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Close</button>
+            <button [disabled]="updateItemForm.invalid" type="submit" class="btn btn-outline-primary btn-sm mr-1">Update it now</button>
+          </div>
+        </form>
+        <span id='itemIdToupdate' class='d-none'></span><span id='prdIdupd' class='d-none'></span>
+    </div>
+  </div>
+</div>

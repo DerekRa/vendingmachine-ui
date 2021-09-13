@@ -1,0 +1,69 @@
+<div class="container-fluid">
+  <div class="cls-pad col-md-6">
+    <table class="table table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Action</th>
+          <th scope="col">Name</th>
+          <th scope="col">Money</th>
+          <th scope="col">Date Created</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let customer of customersAdmin;let i = index">
+          <tr data-toggle="collapse" [attr.data-target]="'#deemmo'+i" class="accordion-toggle">
+            <td>
+              <a href="#" id="collapseData" class="btn btn-outline-primary btn-sm mr-1" >See orders made</a>
+              <a href="#" id="deleteCustomrData" *ngIf="customer?.orders.length == 0;" (click)="deleteCustomerModal(customer)" class="btn btn-outline-danger btn-sm mr-1" data-toggle="modal" data-target="#deleteCustModal">Delete all</a>
+            </td>
+            <td scope="row" >{{'Customer '+customer.id}}</td>
+            <td scope="row" >{{customer.money}}</td>
+            <td scope="row" >{{customer.dateAdded | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+          </tr>
+          <tr>
+            <td colspan="12" class="hiddenRow">
+              <div class="accordian-body collapse col-md-10" id="{{ 'deemmo'+ i}}">
+                <table class="table table-striped">
+                      <thead>
+                        <tr class="info">
+                          <th>Name</th>
+                          <th>Amount</th>
+                          <th>Price</th>
+                          <th>Date Bought</th>
+                        </tr>
+                      </thead>
+                      <tbody *ngFor="let item of customer?.orders;let j = index">
+                        <td>{{item.name}}</td>
+                        <td>1</td>
+                        <td>{{item.price}}</td>
+                        <td>{{item.dateAdded | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+                      </tbody>
+                    </table>
+                  </div>
+              </td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Delete Product Modal -->
+<div class="modal fade" id="deleteCustModal" tabindex="-1" role="dialog" aria-labelledby="deleteCustModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteCustModalLabel">Are you sure?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5>Note: All orders made from this customer will also be deleted.</h5>
+        <div id="dataCustoToDelete"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="delete-cust-form" class="btn-outline-secondary btn-sm mr-1" data-dismiss="modal">Close</button>
+        <button  type="button" (click)="deleteCustomerNow()" class="btn-outline-primary btn-sm mr-1" >Delete now</button>
+      </div>
+    </div>
+  </div>
+</div>

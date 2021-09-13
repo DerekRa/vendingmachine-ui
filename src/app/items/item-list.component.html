@@ -1,0 +1,15 @@
+<div class="container-fluid">
+  <div class="row cls-pad" *ngFor="let product of products" >
+    <div class="col-md-1 border border-success mr-1 cls-pad-in" *ngFor="let item of product.items;let j = index">
+      <h4 >{{product.categoryName+' '+j}}</h4>
+      <h6 class="border-top border-success">{{item.name}}</h6>
+      <p class="border-bottom border-success">
+        <span >{{item.amount}} items</span><br/>
+      <span >{{item.price}} each</span>
+      </p>
+      <p>
+        <button class="btn btn-outline-primary btn-sm" [id]="'#btnpr'+j" (click)="buyItemNow(item, product.id, newcustomer)" >Buy Now</button>
+      </p>
+    </div>
+  </div>
+</div>
